@@ -1,3 +1,4 @@
+import {describe, it, expect} from 'vitest'
 import {AccountBL} from "../src/Lab02/accountBL";
 
 describe("accountBL", () => {
