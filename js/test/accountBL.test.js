@@ -7,6 +7,7 @@ describe("accountBL", () => {
     let fake_getMember;
     let fake_getShaPassword;
     let fake_send;
+    let fake_setLoginFailedCount;
 
 
     beforeEach(() => {
@@ -17,6 +18,8 @@ describe("accountBL", () => {
         accountBL.getShaPassword = fake_getShaPassword;
         fake_send = vi.fn();
         accountBL.send = fake_send;
+        fake_setLoginFailedCount = vi.fn();
+        accountBL.setLoginFailedCount = fake_setLoginFailedCount;
     })
 
     it("login is valid", () => {
@@ -28,6 +31,7 @@ describe("accountBL", () => {
 
         loginShouldBeValid("cash", "12345678");
         shouldNotLog();
+        shouldNotSetFailedCount();
     })
 
     it("login is invalid", () => {
@@ -40,12 +44,22 @@ describe("accountBL", () => {
         loginShouldInvalid("cash", "wrong password");
     })
 
-    it("login invalid should log", () => {
+    it("login invalid should log and set failed count", () => {
         givenLoginInvalid();
 
         // expect(fake_send.mock.calls[0][0]).toBe("cash login failed");
         shouldLog("cash", "login failed");
+
+        shouldSetFailedCount("cash");
     })
+
+    function shouldNotSetFailedCount() {
+        expect(fake_setLoginFailedCount.mock.calls.length).toBe(0);
+    }
+
+    function shouldSetFailedCount(account) {
+        expect(fake_setLoginFailedCount.mock.calls[0][0]).toBe(account);
+    }
 
     function shouldNotLog() {
         expect(fake_send.mock.calls.length).toBe(0);
