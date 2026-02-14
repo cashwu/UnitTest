@@ -1,23 +1,40 @@
-import {describe, it, expect, vi} from 'vitest'
+import {describe, it, expect, vi, beforeEach} from 'vitest'
 import {AccountBL} from "../src/Lab02/accountBL";
 
 describe("accountBL", () => {
 
-    it("login is valid", () => {
+    let accountBL = new AccountBL();
+    let fake_getMember;
+    let fake_getShaPassword;
 
-        let accountBL = new AccountBL();
-
-        let fake_getMember = vi.fn();
+    beforeEach(() => {
+        accountBL = new AccountBL();
+        fake_getMember = vi.fn();
         accountBL.getMember = fake_getMember;
-        fake_getMember.mockReturnValueOnce({
+        fake_getShaPassword = vi.fn();
+        accountBL.getShaPassword = fake_getShaPassword;
+    })
+
+    it("login is valid", () => {
+        givenMember({
             "password": "sha-1234"
         });
 
-        let fake_getShaPassword = vi.fn();
-        accountBL.getShaPassword = fake_getShaPassword;
-        fake_getShaPassword.mockReturnValueOnce("sha-1234");
+        givenShaPassword("sha-1234");
 
-        let isValid = accountBL.login("cash", "12345678");
-        expect(isValid).toBe(true)
+        loginShouldBeValid("cash", "12345678");
     })
+
+    function givenMember(member) {
+        fake_getMember.mockReturnValueOnce(member);
+    }
+
+    function givenShaPassword(shaPassword) {
+        fake_getShaPassword.mockReturnValueOnce(shaPassword);
+    }
+
+    function loginShouldBeValid(account, password) {
+        let isValid = accountBL.login(account, password);
+        expect(isValid).toBe(true)
+    }
 })
