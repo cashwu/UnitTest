@@ -1,10 +1,16 @@
-import {describe, it, expect} from 'vitest'
+import {describe, it, expect, vi} from 'vitest'
 import {DateUtility} from "../src/Lab01/dateUtility";
 
 describe("date utility", () => {
 
     it("today is payday", () => {
-        expect(true);
+
+        let dateUtility = new DateUtility();
+        let fake_getToday = vi.fn();
+        dateUtility.getToday = fake_getToday;
+        fake_getToday.mockReturnValueOnce(new Date(2026, 2, 5));
+
+        expect(dateUtility.isPayday()).toBe(true);
     })
 
 });
