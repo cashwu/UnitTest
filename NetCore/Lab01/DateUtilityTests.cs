@@ -6,13 +6,29 @@ namespace Lab01;
 
 public class DateUtilityTests
 {
+    private readonly FakeDateUtility _fakeDateUtility;
+
+    public DateUtilityTests()
+    {
+        _fakeDateUtility = new FakeDateUtility();
+    }
+
     [Fact]
     public void Today_is_Payday()
     {
         // test
-        var dateUtility = new FakeDateUtility();
-        dateUtility.Today = new DateTime(2026, 03, 05);
-        dateUtility.IsPayday().Should().BeTrue();
+        GivenToday(03, 05);
+        TodayShouldBePayday();
+    }
+
+    private void TodayShouldBePayday()
+    {
+        _fakeDateUtility.IsPayday().Should().BeTrue();
+    }
+
+    private void GivenToday(int month, int day)
+    {
+        _fakeDateUtility.Today = new DateTime(2026, month, day);
     }
 }
 
