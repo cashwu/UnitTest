@@ -6,10 +6,10 @@ describe("accountBL", () => {
     let accountBL = new AccountBL();
     let fake_getMember;
     let fake_getShaPassword;
-    let fake_send;
+    // let fake_send;
     let fake_setLoginFailedCount;
     let fake_getLoginFailedCount;
-
+    let spyOnSend
 
     beforeEach(() => {
         accountBL = new AccountBL();
@@ -17,12 +17,14 @@ describe("accountBL", () => {
         accountBL.getMember = fake_getMember;
         fake_getShaPassword = vi.fn();
         accountBL.getShaPassword = fake_getShaPassword;
-        fake_send = vi.fn();
-        accountBL.send = fake_send;
+        // fake_send = vi.fn();
+        // accountBL.send = fake_send;
         fake_setLoginFailedCount = vi.fn();
         accountBL.setLoginFailedCount = fake_setLoginFailedCount;
         fake_getLoginFailedCount = vi.fn();
         accountBL.getLoginFailedCount = fake_getLoginFailedCount;
+
+        spyOnSend = vi.spyOn(accountBL, 'send');
     })
 
     it("login is valid", () => {
@@ -83,12 +85,22 @@ describe("accountBL", () => {
     }
 
     function shouldNotLog() {
-        expect(fake_send.mock.calls.length).toBe(0);
+        // expect(fake_send.mock.calls.length).toBe(0);
+        expect(spyOnSend).not.toHaveBeenCalled()
+        expect(spyOnSend).toHaveBeenCalledTimes(0)
     }
 
     function shouldLog(account, status) {
-        expect(fake_send.mock.calls[0][0]).toEqual(
-            expect.stringContaining(account) && expect.stringContaining(status)
+        // expect(fake_send.mock.calls[0][0]).toEqual(
+        //     expect.stringContaining(account) && expect.stringContaining(status)
+        // )
+        expect(spyOnSend).toHaveBeenCalled()
+        let message = spyOnSend.mock.calls[0][0];
+        expect(message).contain(account)
+        expect(message).contain(status)
+
+        expect(spyOnSend).toHaveBeenCalledWith(
+            expect.toSatisfy(val => val.includes(account) && val.includes(status))
         )
     }
 
