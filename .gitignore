@@ -263,3 +263,10 @@ __pycache__/
 **/dataProtection/
 
 .DS_Store
+
+# Gradle
+.gradle/
+build/
+
+# Kotlin
+*.class
